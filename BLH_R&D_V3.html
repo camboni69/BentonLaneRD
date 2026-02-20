@@ -1,0 +1,2669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benton Lane — Product Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brown:       #332b1e;
+    --brown-mid:   #4a3d2b;
+    --brown-light: #6b5a42;
+    --charcoal:    #3d3d3d;
+    --charcoal-lt: #5a5a5a;
+    --cream:       #f0ece4;
+    --cream-dk:    #e0d8cc;
+    --warm-white:  #faf8f5;
+    --rule:        #c8bfb0;
+    --body:        #2a2520;
+    --success:     #4a7c59;
+    --warning:     #b5762a;
+    --muted:       #9e9790;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm-white);
+    color: var(--body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SIDEBAR ─────────────────────────────────────────────────────── */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 220px;
+    background: var(--brown);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: width 0.3s ease;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 24px;
+    border-bottom: 1px solid rgba(200,191,176,0.15);
+  }
+
+  .sidebar-logo .wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .sidebar-logo .tagline {
+    font-size: 10px;
+    color: var(--rule);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 0;
+  }
+
+  .nav-section {
+    padding: 8px 16px 4px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(200,191,176,0.5);
+    font-weight: 500;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: rgba(240,236,228,0.7);
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    margin: 1px 0;
+  }
+
+  .nav-item:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .nav-item.active {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+    border-left-color: var(--rule);
+  }
+
+  .nav-item .icon {
+    width: 16px;
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--brown-light);
+    color: var(--cream);
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(200,191,176,0.15);
+  }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--brown-mid);
+    border: 2px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cream);
+    flex-shrink: 0;
+  }
+
+  .user-info .name {
+    font-size: 12px;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .user-info .role {
+    font-size: 10px;
+    color: var(--rule);
+  }
+
+  /* ── MAIN CONTENT ─────────────────────────────────────────────────── */
+  .main {
+    margin-left: 220px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOPBAR ───────────────────────────────────────────────────────── */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--cream-dk);
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-left h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--brown);
+  }
+
+  .topbar-left .breadcrumb {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .btn-primary {
+    background: var(--brown);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: var(--brown-mid); }
+
+  .btn-secondary {
+    background: var(--cream);
+    color: var(--brown);
+    border: 1px solid var(--cream-dk);
+  }
+
+  .btn-secondary:hover { background: var(--cream-dk); }
+
+  .notif-btn {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--cream);
+    border: 1px solid var(--cream-dk);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+    font-size: 16px;
+  }
+
+  .notif-dot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 8px; height: 8px;
+    background: var(--warning);
+    border-radius: 50%;
+    border: 2px solid #fff;
+  }
+
+  /* ── PAGE CONTENT ─────────────────────────────────────────────────── */
+  .page { padding: 32px; display: none; animation: fadeIn 0.2s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── STATS ROW ────────────────────────────────────────────────────── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--cream-dk);
+    border-radius: 10px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--brown);
+  }
+
+  .stat-card.accent::before { background: var(--charcoal); }
+  .stat-card.success::before { background: var(--success); }
+  .stat-card.warning::before { background: var(--warning); }
+
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--brown);
+    line-height: 1;
+  }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .stat-sub span { color: var(--success); font-weight: 600; }
+  .stat-sub span.warn { color: var(--warning); }
+
+  /* ── PIPELINE BOARD ───────────────────────────────────────────────── */
+  .pipeline-board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .pipeline-col {
+    background: #fff;
+    border: 1px solid var(--cream-dk);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .pipeline-col-header {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .pipeline-col:nth-child(1) .pipeline-col-header { background: var(--brown); }
+  .pipeline-col:nth-child(2) .pipeline-col-header { background: var(--brown-mid); }
+  .pipeline-col:nth-child(3) .pipeline-col-header { background: var(--brown-light); }
+  .pipeline-col:nth-child(4) .pipeline-col-header { background: var(--charcoal); }
+  .pipeline-col:nth-child(5) .pipeline-col-header { background: var(--success); }
+
+  .pipeline-col-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .pipeline-col-count {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 10px;
+  }
+
+  .pipeline-col-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 120px;
+  }
+
+  .pipeline-card {
+    background: var(--warm-white);
+    border: 1px solid var(--cream-dk);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .pipeline-card:hover {
+    border-color: var(--brown-light);
+    box-shadow: 0 2px 8px rgba(51,43,30,0.08);
+    transform: translateY(-1px);
+  }
+
+  .card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .tag-metal { background: rgba(51,43,30,0.1); color: var(--brown); }
+  .tag-print { background: rgba(61,61,61,0.1); color: var(--charcoal); }
+  .tag-both  { background: rgba(74,124,89,0.1); color: var(--success); }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--body);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .card-brand {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--cream-dk);
+  }
+
+  .card-days {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .card-days.overdue { color: var(--warning); font-weight: 600; }
+
+  .card-avatars {
+    display: flex;
+    gap: -4px;
+  }
+
+  .mini-avatar {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #fff;
+    color: #fff;
+  }
+
+  /* ── SECTION HEADER ──────────────────────────────────────────────── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--brown);
+  }
+
+  .section-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── TWO COL LAYOUT ──────────────────────────────────────────────── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* ── CARD ────────────────────────────────────────────────────────── */
+  .card {
+    background: #fff;
+    border: 1px solid var(--cream-dk);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .card-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--cream-dk);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-head-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brown);
+  }
+
+  .card-body { padding: 16px 20px; }
+
+  /* ── ACTIVITY FEED ───────────────────────────────────────────────── */
+  .activity-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--cream-dk);
+  }
+
+  .activity-item:last-child { border-bottom: none; }
+
+  .activity-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--brown);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .activity-dot.green { background: var(--success); }
+  .activity-dot.orange { background: var(--warning); }
+
+  .activity-text { font-size: 13px; color: var(--body); line-height: 1.4; }
+  .activity-text strong { color: var(--brown); font-weight: 600; }
+  .activity-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ── CAPACITY BARS ───────────────────────────────────────────────── */
+  .capacity-item {
+    margin-bottom: 16px;
+  }
+
+  .capacity-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .capacity-label span:last-child { color: var(--muted); }
+
+  .capacity-track {
+    height: 8px;
+    background: var(--cream-dk);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .capacity-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--brown);
+    transition: width 0.6s ease;
+  }
+
+  .capacity-fill.warn { background: var(--warning); }
+  .capacity-fill.ok   { background: var(--success); }
+
+  /* ── KPI GRID ────────────────────────────────────────────────────── */
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .kpi-item {
+    padding: 14px;
+    background: var(--warm-white);
+    border-radius: 8px;
+    border: 1px solid var(--cream-dk);
+  }
+
+  .kpi-name { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .kpi-val { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--brown); }
+  .kpi-target { font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .kpi-target span { color: var(--success); font-weight: 600; }
+
+  /* ── SUBMIT FORM ─────────────────────────────────────────────────── */
+  .form-group { margin-bottom: 18px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--brown); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--cream-dk);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--body);
+    background: var(--warm-white);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--brown); }
+  .form-textarea { resize: vertical; min-height: 90px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .submit-card {
+    max-width: 700px;
+    background: #fff;
+    border: 1px solid var(--cream-dk);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .submit-card-head {
+    background: var(--brown);
+    padding: 20px 28px;
+  }
+
+  .submit-card-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .submit-card-head p {
+    font-size: 13px;
+    color: var(--rule);
+    margin-top: 4px;
+  }
+
+  .submit-card-body { padding: 28px; }
+
+  /* ── FEASIBILITY TABLE ───────────────────────────────────────────── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .data-table th {
+    padding: 10px 14px;
+    background: var(--brown);
+    color: #fff;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: left;
+  }
+
+  .data-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--cream-dk);
+    color: var(--body);
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:nth-child(even) td { background: var(--warm-white); }
+  .data-table tr:hover td { background: var(--cream); cursor: pointer; }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .pill-pending  { background: rgba(181,118,42,0.12); color: var(--warning); }
+  .pill-approved { background: rgba(74,124,89,0.12); color: var(--success); }
+  .pill-review   { background: rgba(51,43,30,0.1); color: var(--brown); }
+  .pill-hold     { background: rgba(61,61,61,0.1); color: var(--charcoal); }
+
+  /* ── VAULT ───────────────────────────────────────────────────────── */
+  .doc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+  .doc-card {
+    background: #fff;
+    border: 1px solid var(--cream-dk);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .doc-card:hover {
+    border-color: var(--brown-light);
+    box-shadow: 0 2px 8px rgba(51,43,30,0.08);
+  }
+
+  .doc-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .doc-name { font-size: 13px; font-weight: 600; color: var(--body); margin-bottom: 4px; }
+  .doc-meta { font-size: 11px; color: var(--muted); }
+  .doc-tag {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--cream);
+    color: var(--brown);
+    font-weight: 600;
+  }
+
+  /* ── MODAL ───────────────────────────────────────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(51,43,30,0.5);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 520px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(51,43,30,0.2);
+    animation: modalIn 0.2s ease;
+  }
+
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+  .modal-head {
+    padding: 24px 28px 18px;
+    border-bottom: 1px solid var(--cream-dk);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .modal-head h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--brown);
+  }
+
+  .modal-close {
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--muted);
+    line-height: 1;
+    background: none;
+    border: none;
+  }
+
+  .modal-body { padding: 20px 28px 28px; }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--cream-dk);
+    font-size: 13px;
+  }
+
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row .label { color: var(--muted); }
+  .detail-row .val { font-weight: 500; color: var(--body); }
+
+  .comment-box {
+    background: var(--warm-white);
+    border: 1px solid var(--cream-dk);
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 16px;
+  }
+
+  .comment-box-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .comment-text { font-size: 13px; color: var(--body); line-height: 1.5; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+  /* ── TOAST ───────────────────────────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--brown);
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    z-index: 300;
+    display: none;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── TEAM CHIPS ──────────────────────────────────────────────────── */
+  .team-strip {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .team-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .chip-all    { background: var(--brown); color: #fff; border-color: var(--brown); }
+  .chip-vb     { background: rgba(61,61,61,0.08); color: var(--charcoal); border-color: transparent; }
+  .chip-vb:hover, .chip-vb.active { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+  .chip-prod   { background: rgba(51,43,30,0.08); color: var(--brown); border-color: transparent; }
+  .chip-prod:hover, .chip-prod.active { background: var(--brown); color: #fff; border-color: var(--brown); }
+
+  /* ── PROJECTS PAGE ───────────────────────────────────────────────── */
+  .project-list { display: flex; flex-direction: column; gap: 16px; }
+
+  .project-card {
+    background: #fff;
+    border: 1px solid var(--cream-dk);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+
+  .project-card:hover { box-shadow: 0 2px 12px rgba(51,43,30,0.07); }
+
+  .project-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .project-card-header.open { border-bottom-color: var(--cream-dk); }
+
+  .project-card-header-left { display: flex; align-items: center; gap: 14px; }
+
+  .project-color-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .project-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brown);
+  }
+
+  .project-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .project-header-right { display: flex; align-items: center; gap: 12px; }
+
+  .project-total {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--brown);
+  }
+
+  .project-total-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: right;
+  }
+
+  .project-chevron {
+    font-size: 12px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+
+  .project-chevron.open { transform: rotate(180deg); }
+
+  .project-body { display: none; padding: 20px; }
+  .project-body.open { display: block; }
+
+  /* Tabs inside project */
+  .proj-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--cream-dk);
+    margin-bottom: 20px;
+  }
+
+  .proj-tab {
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  .proj-tab:hover { color: var(--brown); }
+  .proj-tab.active { color: var(--brown); border-bottom-color: var(--brown); }
+
+  .proj-tab-content { display: none; }
+  .proj-tab-content.active { display: block; }
+
+  /* Inline editable table */
+  .proj-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .proj-table th {
+    padding: 9px 12px;
+    background: var(--brown);
+    color: #fff;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: left;
+  }
+
+  .proj-table th:first-child { border-radius: 6px 0 0 0; }
+  .proj-table th:last-child { border-radius: 0 6px 0 0; }
+
+  .proj-table td {
+    padding: 0;
+    border-bottom: 1px solid var(--cream-dk);
+  }
+
+  .proj-table tr:last-child td { border-bottom: none; }
+  .proj-table tr:nth-child(even) td { background: var(--warm-white); }
+
+  .proj-table td input, .proj-table td select {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--body);
+    outline: none;
+  }
+
+  .proj-table td input:focus, .proj-table td select:focus {
+    background: #fffdf9;
+    box-shadow: inset 0 0 0 2px rgba(51,43,30,0.15);
+  }
+
+  .proj-table td.cost-cell input { font-weight: 600; color: var(--brown); }
+  .proj-table td.action-cell {
+    width: 40px;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .del-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1;
+    transition: color 0.15s;
+    padding: 4px 8px;
+  }
+
+  .del-btn:hover { color: #c0392b; }
+
+  .add-row-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    margin-top: 10px;
+    background: none;
+    border: 1.5px dashed var(--cream-dk);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .add-row-btn:hover { border-color: var(--brown); color: var(--brown); background: var(--cream); }
+
+  /* Cost summary bar */
+  .cost-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--warm-white);
+    border-radius: 8px;
+    border: 1px solid var(--cream-dk);
+  }
+
+  .cost-summary-item { text-align: center; }
+  .cost-summary-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 4px; }
+  .cost-summary-val { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--brown); }
+  .cost-summary-val.highlight { color: var(--success); }
+  .cost-summary-val.warn { color: var(--warning); }
+
+  /* Pricing calculator */
+  .pricing-calc {
+    background: var(--warm-white);
+    border: 1px solid var(--cream-dk);
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .calc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--cream-dk);
+    font-size: 13px;
+  }
+
+  .calc-row:last-child { border-bottom: none; }
+  .calc-row label { color: var(--muted); }
+  .calc-row .calc-input {
+    width: 120px;
+    padding: 6px 10px;
+    border: 1px solid var(--cream-dk);
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    text-align: right;
+    background: #fff;
+    color: var(--body);
+    outline: none;
+  }
+
+  .calc-row .calc-input:focus { border-color: var(--brown); }
+  .calc-result { font-weight: 700; color: var(--brown); font-size: 15px; }
+  .calc-result.green { color: var(--success); }
+
+  /* Notes area */
+  .proj-notes {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid var(--cream-dk);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--body);
+    background: var(--warm-white);
+    resize: vertical;
+    outline: none;
+  }
+
+  .proj-notes:focus { border-color: var(--brown); }
+
+  /* New project modal */
+  .np-form { display: flex; flex-direction: column; gap: 14px; }
+  .np-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* ── SUPPLIER PRICE COMPARISON ───────────────────────────────────── */
+  .price-compare-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .price-compare-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .price-compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .price-compare-table th {
+    padding: 10px 14px;
+    background: var(--brown);
+    color: #fff;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: left;
+  }
+  .price-compare-table th:first-child { border-radius: 6px 0 0 0; }
+  .price-compare-table th:last-child  { border-radius: 0 6px 0 0; }
+  .price-compare-table td {
+    padding: 0;
+    border-bottom: 1px solid var(--cream-dk);
+    vertical-align: middle;
+  }
+  .price-compare-table tr:last-child td { border-bottom: none; }
+  .price-compare-table tr:nth-child(even) td { background: var(--warm-white); }
+  .price-compare-table td input {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--body);
+    outline: none;
+  }
+  .price-compare-table td input:focus {
+    background: #fffdf9;
+    box-shadow: inset 0 0 0 2px rgba(51,43,30,0.15);
+  }
+  .price-compare-table td.pc-num input {
+    font-weight: 600;
+    color: var(--brown);
+    text-align: right;
+  }
+  .price-compare-table td.pc-action {
+    width: 40px;
+    text-align: center;
+    padding: 8px;
+  }
+  .pc-winner-cell {
+    padding: 8px 14px !important;
+    text-align: center;
+  }
+  .winner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .winner-badge.gold  { background: rgba(181,118,42,0.15); color: var(--warning); border: 1px solid rgba(181,118,42,0.3); }
+  .winner-badge.green { background: rgba(74,124,89,0.12);  color: var(--success); border: 1px solid rgba(74,124,89,0.3);  }
+  .winner-badge.none  { background: var(--cream); color: var(--muted); border: 1px solid var(--cream-dk); font-weight: 400; }
+
+  /* Category winner sections */
+  .pc-category {
+    margin-bottom: 28px;
+  }
+  .pc-category-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--brown);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--cream-dk);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pc-category-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--brown);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  /* Overall winner summary */
+  .pc-summary {
+    background: var(--warm-white);
+    border: 1px solid var(--cream-dk);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 24px;
+  }
+  .pc-summary-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--brown);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pc-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .pc-summary-item {
+    background: #fff;
+    border: 1px solid var(--cream-dk);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .pc-summary-cat  { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
+  .pc-summary-name { font-size: 14px; font-weight: 600; color: var(--brown); margin-bottom: 4px; }
+  .pc-summary-val  { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--success); }
+  .pc-summary-val.empty { color: var(--muted); font-size: 16px; }
+  .pc-overall-winner {
+    background: linear-gradient(135deg, rgba(51,43,30,0.04), rgba(74,124,89,0.06));
+    border: 1.5px solid rgba(74,124,89,0.3);
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pc-overall-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .pc-overall-name  { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; color: var(--brown); }
+  .pc-overall-cost  { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--success); }
+  .pc-overall-savings { font-size: 12px; color: var(--success); font-weight: 600; margin-top: 2px; }
+  .pc-overall-savings.none { color: var(--muted); font-weight: 400; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="wordmark">Benton Lane</div>
+    <div class="tagline">Product Pipeline</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="showPage('dashboard', this)">
+      <span class="icon">◈</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('pipeline', this)">
+      <span class="icon">⟳</span> Pipeline Board
+      <span class="nav-badge">8</span>
+    </div>
+
+    <div class="nav-section">Venture Builder</div>
+    <div class="nav-item" onclick="showPage('submit', this)">
+      <span class="icon">＋</span> Submit Idea
+    </div>
+    <div class="nav-item" onclick="showPage('roadmap', this)">
+      <span class="icon">◷</span> Product Roadmap
+    </div>
+
+    <div class="nav-section">Production & R&D</div>
+    <div class="nav-item" onclick="showPage('feasibility', this)">
+      <span class="icon">✓</span> Feasibility Review
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="showPage('prototypes', this)">
+      <span class="icon">◫</span> Prototype Tracker
+    </div>
+    <div class="nav-item" onclick="showPage('capacity', this)">
+      <span class="icon">▦</span> Shop Capacity
+    </div>
+
+    <div class="nav-section">Shared</div>
+    <div class="nav-item" onclick="showPage('projects', this)">
+      <span class="icon">◧</span> Projects
+    </div>
+    <div class="nav-item" onclick="showPage('vault', this)">
+      <span class="icon">⊟</span> Document Vault
+    </div>
+    <div class="nav-item" onclick="showPage('kpis', this)">
+      <span class="icon">↗</span> KPI Dashboard
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar">BL</div>
+      <div class="user-info">
+        <div class="name">Admin User</div>
+        <div class="role">Production & R&D</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 id="page-title">Dashboard</h1>
+      <div class="breadcrumb" id="page-breadcrumb">Benton Lane → Overview</div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+      <button class="btn btn-primary" onclick="showPage('submit', document.querySelector('.nav-item:nth-child(5))'))">＋ New Idea</button>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD ──────────────────────────────────────────────────── -->
+  <div class="page active" id="page-dashboard">
+    <div style="padding: 32px;">
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Active in Pipeline</div>
+          <div class="stat-value">8</div>
+          <div class="stat-sub"><span>+2</span> from last month</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-label">Awaiting Feasibility</div>
+          <div class="stat-value">3</div>
+          <div class="stat-sub"><span class="warn">Action needed</span></div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-label">Launched This Quarter</div>
+          <div class="stat-value">2</div>
+          <div class="stat-sub"><span>On track</span> with targets</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-label">Avg. Prototype Time</div>
+          <div class="stat-value">24<span style="font-size:18px">d</span></div>
+          <div class="stat-sub">Target: <span>≤ 30 days</span></div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-bottom: 24px;">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-title">Recent Activity</div>
+            <span style="font-size:11px;color:var(--muted);cursor:pointer">View all →</span>
+          </div>
+          <div class="card-body">
+            <div class="activity-item">
+              <div class="activity-dot green"></div>
+              <div>
+                <div class="activity-text"><strong>Wrought Iron Wall Panel</strong> moved to Prototype stage</div>
+                <div class="activity-time">2 hours ago · Metal Fab Shop</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div>
+                <div class="activity-text"><strong>Botanical Wrapping Paper Series</strong> submitted by Venture Builder</div>
+                <div class="activity-time">Yesterday · Painted Paper</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot orange"></div>
+              <div>
+                <div class="activity-text"><strong>Carbon Steel Side Table</strong> feasibility review overdue</div>
+                <div class="activity-time">3 days ago · Carbon Designs</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot green"></div>
+              <div>
+                <div class="activity-text"><strong>Linen Texture Wallpaper</strong> approved for production handoff</div>
+                <div class="activity-time">4 days ago · Aspen & Arlo</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div>
+                <div class="activity-text"><strong>Geometric Wall Sculpture</strong> brand brief uploaded to vault</div>
+                <div class="activity-time">5 days ago · Anthem Classic</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-title">Shop Capacity — This Week</div>
+            <span style="font-size:11px;color:var(--muted);cursor:pointer" onclick="showPage('capacity', null)">Details →</span>
+          </div>
+          <div class="card-body">
+            <div class="capacity-item">
+              <div class="capacity-label">
+                <span>Metal Fab Shop</span>
+                <span>72% utilized</span>
+              </div>
+              <div class="capacity-track"><div class="capacity-fill warn" style="width:72%"></div></div>
+            </div>
+            <div class="capacity-item">
+              <div class="capacity-label">
+                <span>Print Shop</span>
+                <span>45% utilized</span>
+              </div>
+              <div class="capacity-track"><div class="capacity-fill ok" style="width:45%"></div></div>
+            </div>
+            <div style="margin-top:20px;">
+              <div class="card-head-title" style="font-size:13px;margin-bottom:12px;">Pipeline by Stage</div>
+              <div style="display:flex;gap:6px;align-items:flex-end;height:60px;">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:100%;background:var(--brown);border-radius:3px 3px 0 0;" class="stagger-bar" data-h="40"></div>
+                  <span style="font-size:9px;color:var(--muted)">Brief</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:100%;background:var(--brown-mid);border-radius:3px 3px 0 0;" class="stagger-bar" data-h="25"></div>
+                  <span style="font-size:9px;color:var(--muted)">Feasib.</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:100%;background:var(--brown-light);border-radius:3px 3px 0 0;" class="stagger-bar" data-h="50"></div>
+                  <span style="font-size:9px;color:var(--muted)">Proto.</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:100%;background:var(--charcoal);border-radius:3px 3px 0 0;" class="stagger-bar" data-h="30"></div>
+                  <span style="font-size:9px;color:var(--muted)">Test</span>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+                  <div style="width:100%;background:var(--success);border-radius:3px 3px 0 0;" class="stagger-bar" data-h="15"></div>
+                  <span style="font-size:9px;color:var(--muted)">Launch</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PIPELINE BOARD ──────────────────────────────────────────────── -->
+  <div class="page" id="page-pipeline">
+    <div style="padding: 32px;">
+      <div class="team-strip">
+        <div class="team-chip chip-all">All Products</div>
+        <div class="team-chip chip-vb" onclick="this.classList.toggle('active')">Venture Builder</div>
+        <div class="team-chip chip-prod" onclick="this.classList.toggle('active')">Metal Fab</div>
+        <div class="team-chip chip-prod" onclick="this.classList.toggle('active')">Print Shop</div>
+      </div>
+
+      <div class="pipeline-board">
+        <!-- Idea Brief -->
+        <div class="pipeline-col">
+          <div class="pipeline-col-header">
+            <span class="pipeline-col-title">01 · Idea Brief</span>
+            <span class="pipeline-col-count">3</span>
+          </div>
+          <div class="pipeline-col-body">
+            <div class="pipeline-card" onclick="openModal('Botanical Wrapping Paper Series', 'Painted Paper', 'Print Shop', 'New', '—', 'VB Team submitted a full brief. Awaiting Production intake.')">
+              <div class="card-tag tag-print">Print</div>
+              <div class="card-title">Botanical Wrapping Paper Series</div>
+              <div class="card-brand">Painted Paper</div>
+              <div class="card-footer">
+                <span class="card-days">Submitted 2d ago</span>
+                <div class="mini-avatar" style="background:var(--charcoal)">VB</div>
+              </div>
+            </div>
+            <div class="pipeline-card" onclick="openModal('Heritage Linen Fabric Line', 'Maison & Twill', 'Print Shop', 'New', '—', 'Concept brief received. Fabric specs and colorway direction attached.')">
+              <div class="card-tag tag-print">Print</div>
+              <div class="card-title">Heritage Linen Fabric Line</div>
+              <div class="card-brand">Maison & Twill</div>
+              <div class="card-footer">
+                <span class="card-days">Submitted 4d ago</span>
+                <div class="mini-avatar" style="background:var(--charcoal)">VB</div>
+              </div>
+            </div>
+            <div class="pipeline-card" onclick="openModal('Forged Iron Candle Stand', 'Anthem Classic', 'Metal Fab', 'New', '—', 'Early concept sketch submitted. Material direction: raw iron with wax finish.')">
+              <div class="card-tag tag-metal">Metal</div>
+              <div class="card-title">Forged Iron Candle Stand</div>
+              <div class="card-brand">Anthem Classic</div>
+              <div class="card-footer">
+                <span class="card-days">Submitted 6d ago</span>
+                <div class="mini-avatar" style="background:var(--charcoal)">VB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feasibility -->
+        <div class="pipeline-col">
+          <div class="pipeline-col-header">
+            <span class="pipeline-col-title">02 · Feasibility</span>
+            <span class="pipeline-col-count">2</span>
+          </div>
+          <div class="pipeline-col-body">
+            <div class="pipeline-card" onclick="openModal('Carbon Steel Side Table', 'Carbon Designs', 'Metal Fab', 'Pending Review', '3 days overdue', 'Feasibility review assigned to Metal Fab ops lead. Material cost estimate in progress.')">
+              <div class="card-tag tag-metal">Metal</div>
+              <div class="card-title">Carbon Steel Side Table</div>
+              <div class="card-brand">Carbon Designs</div>
+              <div class="card-footer">
+                <span class="card-days overdue">3d overdue</span>
+                <div class="mini-avatar" style="background:var(--brown)">RD</div>
+              </div>
+            </div>
+            <div class="pipeline-card" onclick="openModal('Geometric Peel & Stick Wallpaper', 'Lemon Park', 'Print Shop', 'In Review', '5 days', 'Print team reviewing substrate options. Two colorways under consideration.')">
+              <div class="card-tag tag-print">Print</div>
+              <div class="card-title">Geometric Peel & Stick Wallpaper</div>
+              <div class="card-brand">Lemon Park</div>
+              <div class="card-footer">
+                <span class="card-days">In review · 5d</span>
+                <div class="mini-avatar" style="background:var(--brown)">RD</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prototype -->
+        <div class="pipeline-col">
+          <div class="pipeline-col-header">
+            <span class="pipeline-col-title">03 · Prototype</span>
+            <span class="pipeline-col-count">2</span>
+          </div>
+          <div class="pipeline-col-body">
+            <div class="pipeline-card" onclick="openModal('Wrought Iron Wall Panel', 'Anthem Classic', 'Metal Fab', 'In Progress', '18 days', 'First sample completed. Finishing and patina application in progress. On track.')">
+              <div class="card-tag tag-metal">Metal</div>
+              <div class="card-title">Wrought Iron Wall Panel</div>
+              <div class="card-brand">Anthem Classic</div>
+              <div class="card-footer">
+                <span class="card-days">Day 18 of 30</span>
+                <div class="mini-avatar" style="background:var(--brown)">RD</div>
+              </div>
+            </div>
+            <div class="pipeline-card" onclick="openModal('Meadow Print Fabric Roll', 'Aspen & Arlo', 'Print Shop', 'In Progress', '11 days', 'Test run completed on 60\" wide linen. Color accuracy at 94%. Second pass scheduled.')">
+              <div class="card-tag tag-print">Print</div>
+              <div class="card-title">Meadow Print Fabric Roll</div>
+              <div class="card-brand">Aspen & Arlo</div>
+              <div class="card-footer">
+                <span class="card-days">Day 11 of 30</span>
+                <div class="mini-avatar" style="background:var(--brown)">RD</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test & Refine -->
+        <div class="pipeline-col">
+          <div class="pipeline-col-header">
+            <span class="pipeline-col-title">04 · Test & Refine</span>
+            <span class="pipeline-col-count">1</span>
+          </div>
+          <div class="pipeline-col-body">
+            <div class="pipeline-card" onclick="openModal('Linen Texture Wallpaper', 'Aspen & Arlo', 'Print Shop', 'Joint Review', '26 days', 'Prototype approved by Print team. Venture Builder reviewing final colorways. Sign-off meeting scheduled for Friday.')">
+              <div class="card-tag tag-both">Both Teams</div>
+              <div class="card-title">Linen Texture Wallpaper</div>
+              <div class="card-brand">Aspen & Arlo</div>
+              <div class="card-footer">
+                <span class="card-days">Day 26 of 30</span>
+                <div style="display:flex;">
+                  <div class="mini-avatar" style="background:var(--charcoal);margin-right:-6px">VB</div>
+                  <div class="mini-avatar" style="background:var(--brown)">RD</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Launch -->
+        <div class="pipeline-col">
+          <div class="pipeline-col-header">
+            <span class="pipeline-col-title">05 · Launch</span>
+            <span class="pipeline-col-count">2</span>
+          </div>
+          <div class="pipeline-col-body">
+            <div class="pipeline-card" onclick="openModal('Arc Steel Floor Lamp', 'Carbon Designs', 'Metal Fab', 'Launched', '28 days total', 'Successfully launched Q1. Production handoff complete. Now in active catalog.')">
+              <div class="card-tag tag-metal">Metal</div>
+              <div class="card-title">Arc Steel Floor Lamp</div>
+              <div class="card-brand">Carbon Designs</div>
+              <div class="card-footer">
+                <span class="card-days" style="color:var(--success);font-weight:600">✓ Launched</span>
+              </div>
+            </div>
+            <div class="pipeline-card" onclick="openModal('Holiday Gift Wrap Collection', 'Painted Paper', 'Print Shop', 'Launched', '22 days total', 'Q4 seasonal launch. Full production run completed. Strong initial sell-through.')">
+              <div class="card-tag tag-print">Print</div>
+              <div class="card-title">Holiday Gift Wrap Collection</div>
+              <div class="card-brand">Painted Paper</div>
+              <div class="card-footer">
+                <span class="card-days" style="color:var(--success);font-weight:600">✓ Launched</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SUBMIT IDEA ─────────────────────────────────────────────────── -->
+  <div class="page" id="page-submit">
+    <div style="padding:32px;">
+      <div class="submit-card">
+        <div class="submit-card-head">
+          <h2>Submit a New Concept</h2>
+          <p>Complete the brief below. Production & R&D will review feasibility within 5 business days.</p>
+        </div>
+        <div class="submit-card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Concept Name</label>
+              <input class="form-input" type="text" placeholder="e.g. Hammered Copper Wall Art">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Brand / Company</label>
+              <select class="form-select">
+                <option>Select brand...</option>
+                <option>Anthem Classic</option>
+                <option>Carbon Designs</option>
+                <option>Painted Paper</option>
+                <option>Aspen & Arlo</option>
+                <option>Lemon Park</option>
+                <option>Maison & Twill</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Production Facility</label>
+              <select class="form-select">
+                <option>Select shop...</option>
+                <option>Metal Fab Shop</option>
+                <option>Print Shop</option>
+                <option>Both / Unsure</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Target Launch Window</label>
+              <select class="form-select">
+                <option>Select window...</option>
+                <option>Q1 2026</option>
+                <option>Q2 2026</option>
+                <option>Q3 2026</option>
+                <option>Q4 2026</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Concept Description</label>
+            <textarea class="form-textarea" placeholder="Describe the product concept, intended look and feel, and what makes it right for this brand..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Market & Positioning</label>
+            <textarea class="form-textarea" style="min-height:70px" placeholder="Who is this for? What problem does it solve or what feeling does it evoke?"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Estimated Retail Price Range</label>
+              <input class="form-input" type="text" placeholder="e.g. $85 – $150">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Priority Level</label>
+              <select class="form-select">
+                <option>Standard</option>
+                <option>High Priority</option>
+                <option>Exploratory</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:8px;">
+            <button class="btn btn-primary" onclick="submitIdea()" style="flex:1;justify-content:center;">Submit to Production & R&D →</button>
+            <button class="btn btn-secondary">Save Draft</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ROADMAP ─────────────────────────────────────────────────────── -->
+  <div class="page" id="page-roadmap">
+    <div style="padding:32px;">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">Product Roadmap — All Active Concepts</div>
+          <div style="display:flex;gap:8px;">
+            <span class="status-pill pill-approved">● Launched</span>
+            <span class="status-pill pill-review">● In Pipeline</span>
+            <span class="status-pill pill-pending">● Needs Action</span>
+          </div>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Brand</th>
+                <th>Shop</th>
+                <th>Stage</th>
+                <th>Status</th>
+                <th>Days Active</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="openModal('Wrought Iron Wall Panel','Anthem Classic','Metal Fab','Prototype','18 days','First sample completed. Finishing in progress.')">
+                <td><strong>Wrought Iron Wall Panel</strong></td>
+                <td>Anthem Classic</td>
+                <td>Metal Fab</td>
+                <td>Prototype</td>
+                <td><span class="status-pill pill-review">● In Progress</span></td>
+                <td>18d</td>
+              </tr>
+              <tr onclick="openModal('Linen Texture Wallpaper','Aspen & Arlo','Print Shop','Test & Refine','26 days','Joint team review in progress.')">
+                <td><strong>Linen Texture Wallpaper</strong></td>
+                <td>Aspen & Arlo</td>
+                <td>Print Shop</td>
+                <td>Test & Refine</td>
+                <td><span class="status-pill pill-review">● Joint Review</span></td>
+                <td>26d</td>
+              </tr>
+              <tr onclick="openModal('Carbon Steel Side Table','Carbon Designs','Metal Fab','Feasibility','3 days overdue','Feasibility review overdue.')">
+                <td><strong>Carbon Steel Side Table</strong></td>
+                <td>Carbon Designs</td>
+                <td>Metal Fab</td>
+                <td>Feasibility</td>
+                <td><span class="status-pill pill-pending">● Overdue</span></td>
+                <td>12d</td>
+              </tr>
+              <tr onclick="openModal('Meadow Print Fabric Roll','Aspen & Arlo','Print Shop','Prototype','11 days','Test run completed on linen.')">
+                <td><strong>Meadow Print Fabric Roll</strong></td>
+                <td>Aspen & Arlo</td>
+                <td>Print Shop</td>
+                <td>Prototype</td>
+                <td><span class="status-pill pill-review">● In Progress</span></td>
+                <td>11d</td>
+              </tr>
+              <tr onclick="openModal('Botanical Wrapping Paper Series','Painted Paper','Print Shop','Idea Brief','2 days','Awaiting Production intake.')">
+                <td><strong>Botanical Wrapping Paper Series</strong></td>
+                <td>Painted Paper</td>
+                <td>Print Shop</td>
+                <td>Idea Brief</td>
+                <td><span class="status-pill pill-hold">● Awaiting Intake</span></td>
+                <td>2d</td>
+              </tr>
+              <tr onclick="openModal('Arc Steel Floor Lamp','Carbon Designs','Metal Fab','Launched','28 days total','Live in catalog.')">
+                <td><strong>Arc Steel Floor Lamp</strong></td>
+                <td>Carbon Designs</td>
+                <td>Metal Fab</td>
+                <td>Launched</td>
+                <td><span class="status-pill pill-approved">● Live</span></td>
+                <td>28d</td>
+              </tr>
+              <tr onclick="openModal('Holiday Gift Wrap Collection','Painted Paper','Print Shop','Launched','22 days total','Full production run complete.')">
+                <td><strong>Holiday Gift Wrap Collection</strong></td>
+                <td>Painted Paper</td>
+                <td>Print Shop</td>
+                <td>Launched</td>
+                <td><span class="status-pill pill-approved">● Live</span></td>
+                <td>22d</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FEASIBILITY REVIEW ──────────────────────────────────────────── -->
+  <div class="page" id="page-feasibility">
+    <div style="padding:32px;">
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-head">
+          <div class="card-head-title">Pending Feasibility Reviews</div>
+          <span style="font-size:12px;color:var(--warning);font-weight:600;">3 awaiting decision</span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Concept</th>
+                <th>Brand</th>
+                <th>Submitted By</th>
+                <th>Shop</th>
+                <th>Days Waiting</th>
+                <th>Decision</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Carbon Steel Side Table</strong></td>
+                <td>Carbon Designs</td>
+                <td>Venture Builder</td>
+                <td>Metal Fab</td>
+                <td style="color:var(--warning);font-weight:600">12d ⚠</td>
+                <td>
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn btn-primary" style="padding:4px 10px;font-size:11px;" onclick="approve(this)">Approve</button>
+                    <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="holdItem(this)">Hold</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Botanical Wrapping Paper Series</strong></td>
+                <td>Painted Paper</td>
+                <td>Venture Builder</td>
+                <td>Print Shop</td>
+                <td>2d</td>
+                <td>
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn btn-primary" style="padding:4px 10px;font-size:11px;" onclick="approve(this)">Approve</button>
+                    <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="holdItem(this)">Hold</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Heritage Linen Fabric Line</strong></td>
+                <td>Maison & Twill</td>
+                <td>Venture Builder</td>
+                <td>Print Shop</td>
+                <td>4d</td>
+                <td>
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn btn-primary" style="padding:4px 10px;font-size:11px;" onclick="approve(this)">Approve</button>
+                    <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="holdItem(this)">Hold</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Recently Decided</div></div>
+        <div class="card-body" style="padding:0;">
+          <table class="data-table">
+            <thead><tr><th>Concept</th><th>Brand</th><th>Shop</th><th>Decision</th><th>Date</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Geometric Peel & Stick Wallpaper</strong></td><td>Lemon Park</td><td>Print Shop</td><td><span class="status-pill pill-review">● In Review</span></td><td>Jan 14</td></tr>
+              <tr><td><strong>Wrought Iron Wall Panel</strong></td><td>Anthem Classic</td><td>Metal Fab</td><td><span class="status-pill pill-approved">● Approved</span></td><td>Jan 10</td></tr>
+              <tr><td><strong>Meadow Print Fabric Roll</strong></td><td>Aspen & Arlo</td><td>Print Shop</td><td><span class="status-pill pill-approved">● Approved</span></td><td>Jan 8</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROTOTYPE TRACKER ───────────────────────────────────────────── -->
+  <div class="page" id="page-prototypes">
+    <div style="padding:32px;">
+      <div class="three-col">
+        <div class="card">
+          <div style="background:var(--brown);padding:14px 18px;">
+            <div style="font-size:11px;color:var(--rule);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Metal Fab</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#fff;">Wrought Iron Wall Panel</div>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:var(--muted)">Progress</span><span style="font-weight:600;color:var(--brown)">Day 18 of 30</span></div>
+              <div class="capacity-track"><div class="capacity-fill" style="width:60%"></div></div>
+            </div>
+            <div class="detail-row"><span class="label">Brand</span><span class="val">Anthem Classic</span></div>
+            <div class="detail-row"><span class="label">Shop</span><span class="val">Metal Fab</span></div>
+            <div class="detail-row"><span class="label">Status</span><span class="val" style="color:var(--success)">On Track</span></div>
+            <div style="margin-top:12px;background:var(--warm-white);border-radius:6px;padding:10px;font-size:12px;color:var(--body);">Latest note: First sample completed. Applying patina finish — two color options being tested.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="background:var(--brown-mid);padding:14px 18px;">
+            <div style="font-size:11px;color:var(--rule);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Print Shop</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#fff;">Meadow Print Fabric Roll</div>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:var(--muted)">Progress</span><span style="font-weight:600;color:var(--brown)">Day 11 of 30</span></div>
+              <div class="capacity-track"><div class="capacity-fill ok" style="width:37%"></div></div>
+            </div>
+            <div class="detail-row"><span class="label">Brand</span><span class="val">Aspen & Arlo</span></div>
+            <div class="detail-row"><span class="label">Shop</span><span class="val">Print Shop</span></div>
+            <div class="detail-row"><span class="label">Status</span><span class="val" style="color:var(--success)">On Track</span></div>
+            <div style="margin-top:12px;background:var(--warm-white);border-radius:6px;padding:10px;font-size:12px;color:var(--body);">Latest note: Color accuracy at 94% on linen substrate. Second pass scheduled for Thursday.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="background:var(--charcoal);padding:14px 18px;">
+            <div style="font-size:11px;color:var(--rule);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Print Shop</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#fff;">Linen Texture Wallpaper</div>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:var(--muted)">Progress</span><span style="font-weight:600;color:var(--warning)">Day 26 of 30</span></div>
+              <div class="capacity-track"><div class="capacity-fill warn" style="width:87%"></div></div>
+            </div>
+            <div class="detail-row"><span class="label">Brand</span><span class="val">Aspen & Arlo</span></div>
+            <div class="detail-row"><span class="label">Shop</span><span class="val">Print Shop</span></div>
+            <div class="detail-row"><span class="label">Status</span><span class="val" style="color:var(--warning)">In Joint Review</span></div>
+            <div style="margin-top:12px;background:var(--warm-white);border-radius:6px;padding:10px;font-size:12px;color:var(--body);">Latest note: Prototype approved by Production. Venture Builder reviewing final colorway selection before sign-off.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SHOP CAPACITY ───────────────────────────────────────────────── -->
+  <div class="page" id="page-capacity">
+    <div style="padding:32px;">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head" style="background:var(--brown);border-radius:10px 10px 0 0;">
+            <div class="card-head-title" style="color:#fff;">Metal Fab Shop</div>
+            <span style="font-size:12px;color:var(--rule);">Anthem Classic · Carbon Designs</span>
+          </div>
+          <div class="card-body">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:700;color:var(--warning);margin-bottom:4px;">72%</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">Current weekly utilization</div>
+            <div class="capacity-item">
+              <div class="capacity-label"><span>Wrought Iron Wall Panel</span><span>Active</span></div>
+              <div class="capacity-track"><div class="capacity-fill" style="width:40%"></div></div>
+            </div>
+            <div class="capacity-item">
+              <div class="capacity-label"><span>Carbon Steel Side Table</span><span>Pending</span></div>
+              <div class="capacity-track"><div class="capacity-fill warn" style="width:25%"></div></div>
+            </div>
+            <div class="capacity-item">
+              <div class="capacity-label"><span>Forged Iron Candle Stand</span><span>Queued</span></div>
+              <div class="capacity-track"><div class="capacity-fill ok" style="width:15%"></div></div>
+            </div>
+            <div style="padding:12px;background:rgba(181,118,42,0.08);border-radius:6px;border:1px solid rgba(181,118,42,0.2);margin-top:8px;">
+              <div style="font-size:12px;color:var(--warning);font-weight:600;">⚠ Approaching capacity</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Consider staggering new intake — 3 projects currently active or queued.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head" style="background:var(--brown-mid);border-radius:10px 10px 0 0;">
+            <div class="card-head-title" style="color:#fff;">Print Shop</div>
+            <span style="font-size:12px;color:var(--rule);">Painted Paper · Aspen & Arlo · Lemon Park · Maison & Twill</span>
+          </div>
+          <div class="card-body">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:700;color:var(--success);margin-bottom:4px;">45%</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">Current weekly utilization</div>
+            <div class="capacity-item">
+              <div class="capacity-label"><span>Linen Texture Wallpaper</span><span>Test & Refine</span></div>
+              <div class="capacity-track"><div class="capacity-fill" style="width:20%"></div></div>
+            </div>
+            <div class="capacity-item">
+              <div class="capacity-label"><span>Meadow Print Fabric Roll</span><span>Prototype</span></div>
+              <div class="capacity-track"><div class="capacity-fill" style="width:18%"></div></div>
+            </div>
+            <div class="capacity-item">
+              <div class="capacity-label"><span>Geometric Wallpaper</span><span>Feasibility</span></div>
+              <div class="capacity-track"><div class="capacity-fill ok" style="width:10%"></div></div>
+            </div>
+            <div style="padding:12px;background:rgba(74,124,89,0.08);border-radius:6px;border:1px solid rgba(74,124,89,0.2);margin-top:8px;">
+              <div style="font-size:12px;color:var(--success);font-weight:600;">✓ Capacity available</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">Print Shop can absorb 2–3 additional intake projects this month.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROJECTS ───────────────────────────────────────────────────── -->
+  <div class="page" id="page-projects">
+    <div style="padding:32px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div>
+          <div style="font-size:13px;color:var(--muted);">All teams can view and edit. Changes are visible instantly across both departments.</div>
+        </div>
+        <button class="btn btn-primary" onclick="openNewProjectModal()">＋ New Project</button>
+      </div>
+      <div class="project-list" id="project-list"></div>
+    </div>
+  </div>
+
+  <!-- ── DOCUMENT VAULT ──────────────────────────────────────────────── -->
+  <div class="page" id="page-vault">
+    <div style="padding:32px;">
+      <div class="doc-grid">
+        <div class="doc-card"><div class="doc-icon">📄</div><div class="doc-name">Wrought Iron Wall Panel — Brand Brief</div><div class="doc-meta">Uploaded Jan 8 · Venture Builder</div><div class="doc-tag">Anthem Classic</div></div>
+        <div class="doc-card"><div class="doc-icon">📐</div><div class="doc-name">Carbon Steel Side Table — Spec Sheet</div><div class="doc-meta">Uploaded Jan 12 · Production R&D</div><div class="doc-tag">Carbon Designs</div></div>
+        <div class="doc-card"><div class="doc-icon">🎨</div><div class="doc-name">Linen Wallpaper — Colorway Samples</div><div class="doc-meta">Uploaded Jan 15 · Venture Builder</div><div class="doc-tag">Aspen & Arlo</div></div>
+        <div class="doc-card"><div class="doc-icon">📋</div><div class="doc-name">Meadow Fabric — Print Test Results</div><div class="doc-meta">Uploaded Jan 13 · Production R&D</div><div class="doc-tag">Aspen & Arlo</div></div>
+        <div class="doc-card"><div class="doc-icon">📄</div><div class="doc-name">Botanical Wrapping Paper — Concept Brief</div><div class="doc-meta">Uploaded Jan 17 · Venture Builder</div><div class="doc-tag">Painted Paper</div></div>
+        <div class="doc-card"><div class="doc-icon">✅</div><div class="doc-name">Arc Steel Floor Lamp — Launch Checklist</div><div class="doc-meta">Uploaded Jan 5 · Production R&D</div><div class="doc-tag">Carbon Designs</div></div>
+        <div class="doc-card"><div class="doc-icon">📊</div><div class="doc-name">Q1 Pipeline Status Report</div><div class="doc-meta">Uploaded Jan 16 · Admin</div><div class="doc-tag">All Brands</div></div>
+        <div class="doc-card"><div class="doc-icon">📐</div><div class="doc-name">Metal Fab — Materials Cost Estimate</div><div class="doc-meta">Uploaded Jan 11 · Production R&D</div><div class="doc-tag">Metal Fab Shop</div></div>
+        <div class="doc-card"><div class="doc-icon">🖨</div><div class="doc-name">Print Shop — Substrate Reference Guide</div><div class="doc-meta">Uploaded Dec 20 · Production R&D</div><div class="doc-tag">Print Shop</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── KPI DASHBOARD ───────────────────────────────────────────────── -->
+  <div class="page" id="page-kpis">
+    <div style="padding:32px;">
+      <div class="two-col" style="margin-bottom:20px;">
+        <div class="card">
+          <div class="card-head"><div class="card-head-title">Key Performance Indicators</div><span style="font-size:11px;color:var(--muted)">Month-to-date</span></div>
+          <div class="card-body">
+            <div class="kpi-grid">
+              <div class="kpi-item">
+                <div class="kpi-name">Prototype Turnaround</div>
+                <div class="kpi-val">24<span style="font-size:16px">d</span></div>
+                <div class="kpi-target">Target: <span>≤ 30 days ✓</span></div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-name">Pipeline Volume</div>
+                <div class="kpi-val">8</div>
+                <div class="kpi-target">Target: <span>3–5 active</span> (exceeded)</div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-name">Cross-Shop Projects</div>
+                <div class="kpi-val">1</div>
+                <div class="kpi-target">Target: 25% — <span style="color:var(--warning)">building</span></div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-name">VB Cycle Time</div>
+                <div class="kpi-val">6<span style="font-size:16px">d</span></div>
+                <div class="kpi-target">Target: <span>≤ 14 days ✓</span></div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-name">Launched This Qtr</div>
+                <div class="kpi-val">2</div>
+                <div class="kpi-target">Target: <span>on track</span></div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-name">Launch Success Rate</div>
+                <div class="kpi-val">100<span style="font-size:16px">%</span></div>
+                <div class="kpi-target">Target: <span>≥ 60% ✓</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div class="card-head-title">Pipeline Health Summary</div></div>
+          <div class="card-body">
+            <div class="activity-item">
+              <div class="activity-dot green"></div>
+              <div><div class="activity-text"><strong>2 products launched</strong> this quarter — Arc Steel Floor Lamp and Holiday Gift Wrap Collection both live.</div></div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot orange"></div>
+              <div><div class="activity-text"><strong>1 overdue feasibility review</strong> — Carbon Steel Side Table at 12 days, action required from Metal Fab team.</div></div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div><div class="activity-text"><strong>Metal Fab at 72% capacity</strong> — approaching limit. Consider staggering new intakes for this shop.</div></div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot green"></div>
+              <div><div class="activity-text"><strong>Print Shop has runway</strong> — 45% utilized, able to absorb 2–3 additional projects this month.</div></div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot green"></div>
+              <div><div class="activity-text"><strong>Linen Texture Wallpaper</strong> entering final sign-off — expected to move to Launch stage by end of week.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="modal-title"></h3>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;" id="modal-brand"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-row"><span class="label">Production Facility</span><span class="val" id="modal-shop"></span></div>
+      <div class="detail-row"><span class="label">Stage</span><span class="val" id="modal-stage"></span></div>
+      <div class="detail-row"><span class="label">Time Active</span><span class="val" id="modal-time"></span></div>
+      <div class="comment-box">
+        <div class="comment-box-label">Latest Update</div>
+        <div class="comment-text" id="modal-note"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="closeModal();showToast('Update saved successfully.')">Save Note</button>
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- NEW PROJECT MODAL -->
+<div class="modal-overlay" id="new-project-modal" onclick="closeNewProjectModalOutside(event)">
+  <div class="modal" style="width:480px;">
+    <div class="modal-head">
+      <div>
+        <h3>New Project</h3>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px;">Create a shared project workspace for both teams</div>
+      </div>
+      <button class="modal-close" onclick="closeNewProjectModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="np-form">
+        <div class="np-row">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Project Name</label>
+            <input class="form-input" id="np-name" type="text" placeholder="e.g. Copper Wall Sconce">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Brand</label>
+            <select class="form-select" id="np-brand">
+              <option value="">Select brand...</option>
+              <option>Anthem Classic</option>
+              <option>Carbon Designs</option>
+              <option>Painted Paper</option>
+              <option>Aspen & Arlo</option>
+              <option>Lemon Park</option>
+              <option>Maison & Twill</option>
+            </select>
+          </div>
+        </div>
+        <div class="np-row">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Production Shop</label>
+            <select class="form-select" id="np-shop">
+              <option value="">Select shop...</option>
+              <option>Metal Fab Shop</option>
+              <option>Print Shop</option>
+              <option>Both Shops</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Pipeline Stage</label>
+            <select class="form-select" id="np-stage">
+              <option>Idea Brief</option>
+              <option>Feasibility</option>
+              <option>Prototype</option>
+              <option>Test & Refine</option>
+              <option>Launch</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions" style="margin-top:8px;">
+          <button class="btn btn-primary" onclick="createProject()" style="flex:1;justify-content:center;">Create Project →</button>
+          <button class="btn btn-secondary" onclick="closeNewProjectModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const pages = {
+  dashboard:   { title: 'Dashboard',            crumb: 'Benton Lane → Overview' },
+  pipeline:    { title: 'Pipeline Board',        crumb: 'Benton Lane → Pipeline' },
+  submit:      { title: 'Submit a New Idea',     crumb: 'Benton Lane → Venture Builder → Submit' },
+  roadmap:     { title: 'Product Roadmap',       crumb: 'Benton Lane → Venture Builder → Roadmap' },
+  feasibility: { title: 'Feasibility Review',    crumb: 'Benton Lane → Production & R&D → Feasibility' },
+  prototypes:  { title: 'Prototype Tracker',     crumb: 'Benton Lane → Production & R&D → Prototypes' },
+  capacity:    { title: 'Shop Capacity',         crumb: 'Benton Lane → Production & R&D → Capacity' },
+  projects:    { title: 'Projects',               crumb: 'Benton Lane → Shared → Projects' },
+  vault:       { title: 'Document Vault',        crumb: 'Benton Lane → Shared → Vault' },
+  kpis:        { title: 'KPI Dashboard',         crumb: 'Benton Lane → Shared → KPIs' },
+};
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = pages[id].title;
+  document.getElementById('page-breadcrumb').textContent = pages[id].crumb;
+}
+
+function openModal(title, brand, shop, stage, time, note) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-brand').textContent = brand;
+  document.getElementById('modal-shop').textContent = shop;
+  document.getElementById('modal-stage').textContent = stage;
+  document.getElementById('modal-time').textContent = time;
+  document.getElementById('modal-note').textContent = note;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target.id === 'modal') closeModal(); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+function submitIdea() {
+  showToast('✓ Concept submitted to Production & R&D for feasibility review.');
+  setTimeout(() => showPage('pipeline', document.querySelector('.nav-item:nth-child(2)')), 500);
+}
+
+function approve(btn) {
+  const row = btn.closest('tr');
+  row.querySelector('td:last-child').innerHTML = '<span class="status-pill pill-approved">✓ Approved</span>';
+  showToast('✓ Concept approved — moved to Prototype stage.');
+}
+
+function holdItem(btn) {
+  const row = btn.closest('tr');
+  row.querySelector('td:last-child').innerHTML = '<span class="status-pill pill-hold">On Hold</span>';
+  showToast('Concept placed on hold.');
+}
+
+// Animate stagger bars on load
+window.addEventListener('load', () => {
+  document.querySelectorAll('.stagger-bar').forEach((bar, i) => {
+    setTimeout(() => { bar.style.height = bar.dataset.h + 'px'; }, i * 100);
+  });
+  renderProjects();
+});
+
+// ── PROJECTS ENGINE ───────────────────────────────────────────────────────────
+
+const dotColors = ['#332b1e','#4a3d2b','#3d3d3d','#4a7c59','#6b5a42','#b5762a'];
+
+let projects = [
+  {
+    id: 1,
+    name: 'Wrought Iron Wall Panel',
+    brand: 'Anthem Classic',
+    shop: 'Metal Fab Shop',
+    stage: 'Prototype',
+    color: dotColors[0],
+    notes: 'First sample complete. Two patina finishes being tested — dark wax and raw iron. Venture Builder prefers the raw look. Aiming for 24" x 36" as the hero size.',
+    suppliers: [
+      { name: 'Midwest Steel Supply', contact: 'Jake Morrison', phone: '(312) 555-0182', leadTime: '7–10 days', status: 'Active' },
+      { name: 'Atlas Finishing Co.', contact: 'Maria Chen', phone: '(773) 555-0341', leadTime: '3–5 days', status: 'Active' },
+    ],
+    materials: [
+      { item: 'Wrought Iron Sheet (16ga)', supplier: 'Midwest Steel Supply', qty: '10', unitCost: 48, totalCost: 480 },
+      { item: 'Wax Finishing Compound', supplier: 'Atlas Finishing Co.', qty: '2', unitCost: 32, totalCost: 64 },
+      { item: 'Wall Mount Hardware Kit', supplier: 'In-house', qty: '10', unitCost: 8, totalCost: 80 },
+    ],
+    labor: [
+      { task: 'Cutting & Forming', hours: 3.5, rate: 55, total: 192.50 },
+      { task: 'Finishing & Patina', hours: 1.5, rate: 55, total: 82.50 },
+      { task: 'QC & Packaging', hours: 0.5, rate: 45, total: 22.50 },
+    ],
+    overhead: 12,
+    targetMargin: 60,
+    priceCompare: [
+      { supplier: 'Midwest Steel Supply', product: 480, packaging: 35, shipping: 62, notes: 'Bulk discount available at 50+ units' },
+      { supplier: 'Atlas Finishing Co.',  product: 510, packaging: 28, shipping: 55, notes: 'Faster lead time, premium finish' },
+    ],
+  },
+  {
+    id: 2,
+    name: 'Linen Texture Wallpaper',
+    brand: 'Aspen & Arlo',
+    shop: 'Print Shop',
+    stage: 'Test & Refine',
+    color: dotColors[2],
+    notes: 'Prototype approved by Production. Joint review with Venture Builder on final colorways — three options shortlisted: Sage, Warm Ivory, and Slate. Sign-off call scheduled Friday.',
+    suppliers: [
+      { name: 'Cascade Paper Group', contact: 'Tom Reilly', phone: '(503) 555-0217', leadTime: '5–7 days', status: 'Active' },
+      { name: 'ColorBlend Inks', contact: 'Sandra Wu', phone: '(206) 555-0088', leadTime: '2–3 days', status: 'Preferred' },
+    ],
+    materials: [
+      { item: 'Type II Vinyl Wallpaper Base', supplier: 'Cascade Paper Group', qty: '500', unitCost: 0.85, totalCost: 425 },
+      { item: 'Linen Texture Ink Set (4 colors)', supplier: 'ColorBlend Inks', qty: '1', unitCost: 210, totalCost: 210 },
+      { item: 'Adhesive Backing', supplier: 'Cascade Paper Group', qty: '500', unitCost: 0.20, totalCost: 100 },
+    ],
+    labor: [
+      { task: 'Print Setup & Calibration', hours: 2.0, rate: 45, total: 90 },
+      { task: 'Production Run', hours: 3.0, rate: 40, total: 120 },
+      { task: 'Cutting & Roll Packaging', hours: 1.0, rate: 38, total: 38 },
+    ],
+    overhead: 10,
+    targetMargin: 55,
+    priceCompare: [
+      { supplier: 'Cascade Paper Group', product: 525, packaging: 42, shipping: 78, notes: 'Volume pricing on 500+ rolls' },
+      { supplier: 'ColorBlend Inks',     product: 498, packaging: 50, shipping: 88, notes: 'Better ink quality, higher ship cost' },
+    ],
+  },
+  {
+    id: 3,
+    name: 'Botanical Wrapping Paper Series',
+    brand: 'Painted Paper',
+    shop: 'Print Shop',
+    stage: 'Idea Brief',
+    color: dotColors[4],
+    notes: 'Early concept stage. VB team envisions 3-design series — ferns, wildflowers, and citrus botanicals. Premium matte finish preferred. No supplier contacts assigned yet.',
+    suppliers: [],
+    materials: [],
+    labor: [],
+    overhead: 10,
+    targetMargin: 65,
+    priceCompare: [],
+  },
+];
+
+let openProjectId = null;
+
+function calcMaterialTotal(proj) {
+  return proj.materials.reduce((s, r) => s + (parseFloat(r.totalCost) || 0), 0);
+}
+function calcLaborTotal(proj) {
+  return proj.labor.reduce((s, r) => s + (parseFloat(r.total) || 0), 0);
+}
+function calcCOGS(proj) {
+  const mat = calcMaterialTotal(proj);
+  const lab = calcLaborTotal(proj);
+  const oh  = (mat + lab) * ((parseFloat(proj.overhead) || 0) / 100);
+  return mat + lab + oh;
+}
+function calcSuggestedPrice(proj) {
+  const cogs = calcCOGS(proj);
+  const margin = parseFloat(proj.targetMargin) || 60;
+  return cogs / (1 - margin / 100);
+}
+function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+function renderProjects() {
+  const container = document.getElementById('project-list');
+  if (!container) return;
+  container.innerHTML = '';
+  projects.forEach(proj => container.appendChild(buildProjectCard(proj)));
+}
+
+function buildProjectCard(proj) {
+  const cogs   = calcCOGS(proj);
+  const price  = calcSuggestedPrice(proj);
+  const matTot = calcMaterialTotal(proj);
+  const labTot = calcLaborTotal(proj);
+  const card = document.createElement('div');
+  card.className = 'project-card';
+  card.id = 'proj-card-' + proj.id;
+  const isOpen = openProjectId === proj.id;
+  card.innerHTML = `
+    <div class="project-card-header ${isOpen?'open':''}" onclick="toggleProject(${proj.id})">
+      <div class="project-card-header-left">
+        <div class="project-color-dot" style="background:${proj.color}"></div>
+        <div>
+          <div class="project-name">${proj.name}</div>
+          <div class="project-meta">${proj.brand} · ${proj.shop} · <span class="status-pill pill-review" style="font-size:10px;padding:1px 7px;">${proj.stage}</span></div>
+        </div>
+      </div>
+      <div class="project-header-right">
+        <div style="text-align:right;">
+          <div class="project-total-label">Est. COGS</div>
+          <div class="project-total">${cogs>0?fmt(cogs):'—'}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="project-total-label">Suggested Retail</div>
+          <div class="project-total" style="color:var(--success)">${price>0?fmt(price):'—'}</div>
+        </div>
+        <div class="project-chevron ${isOpen?'open':''}">▼</div>
+      </div>
+    </div>
+    <div class="project-body ${isOpen?'open':''}">
+      <div class="cost-summary">
+        <div class="cost-summary-item"><div class="cost-summary-label">Materials</div><div class="cost-summary-val">${matTot>0?fmt(matTot):'—'}</div></div>
+        <div class="cost-summary-item"><div class="cost-summary-label">Labor</div><div class="cost-summary-val">${labTot>0?fmt(labTot):'—'}</div></div>
+        <div class="cost-summary-item"><div class="cost-summary-label">Total COGS</div><div class="cost-summary-val warn">${cogs>0?fmt(cogs):'—'}</div></div>
+        <div class="cost-summary-item"><div class="cost-summary-label">Suggested Retail</div><div class="cost-summary-val highlight">${price>0?fmt(price):'—'}</div></div>
+      </div>
+      <div class="proj-tabs">
+        <div class="proj-tab active" onclick="switchProjTab(${proj.id},'suppliers',this)">Suppliers</div>
+        <div class="proj-tab" onclick="switchProjTab(${proj.id},'materials',this)">Materials & Costs</div>
+        <div class="proj-tab" onclick="switchProjTab(${proj.id},'labor',this)">Labor</div>
+        <div class="proj-tab" onclick="switchProjTab(${proj.id},'pricing',this)">Pricing Calculator</div>
+        <div class="proj-tab" onclick="switchProjTab(${proj.id},'compare',this)">⚖ Price Compare</div>
+        <div class="proj-tab" onclick="switchProjTab(${proj.id},'notes',this)">Notes</div>
+      </div>
+      <div class="proj-tab-content active" id="tab-${proj.id}-suppliers">
+        <table class="proj-table" id="supplier-table-${proj.id}">
+          <thead><tr><th>Supplier Name</th><th>Contact</th><th>Phone / Email</th><th>Lead Time</th><th>Status</th><th></th></tr></thead>
+          <tbody>${proj.suppliers.map((s,i)=>supplierRow(proj.id,i,s)).join('')}</tbody>
+        </table>
+        <button class="add-row-btn" onclick="addSupplierRow(${proj.id})">＋ Add Supplier</button>
+      </div>
+      <div class="proj-tab-content" id="tab-${proj.id}-materials">
+        <table class="proj-table" id="material-table-${proj.id}">
+          <thead><tr><th>Material / Item</th><th>Supplier</th><th>Quantity</th><th>Unit Cost</th><th>Total Cost</th><th></th></tr></thead>
+          <tbody>${proj.materials.map((m,i)=>materialRow(proj.id,i,m)).join('')}</tbody>
+        </table>
+        <button class="add-row-btn" onclick="addMaterialRow(${proj.id})">＋ Add Material</button>
+      </div>
+      <div class="proj-tab-content" id="tab-${proj.id}-labor">
+        <table class="proj-table" id="labor-table-${proj.id}">
+          <thead><tr><th>Task / Operation</th><th>Hours</th><th>Rate ($/hr)</th><th>Total</th><th></th></tr></thead>
+          <tbody>${proj.labor.map((l,i)=>laborRow(proj.id,i,l)).join('')}</tbody>
+        </table>
+        <button class="add-row-btn" onclick="addLaborRow(${proj.id})">＋ Add Task</button>
+      </div>
+      <div class="proj-tab-content" id="tab-${proj.id}-pricing">
+        <div class="pricing-calc" id="pricing-calc-${proj.id}">${renderPricingCalc(proj)}</div>
+      </div>
+      <div class="proj-tab-content" id="tab-${proj.id}-compare">
+        <div class="price-compare-desc">Enter pricing from each supplier for every cost component — product, packaging, and shipping. Winners are automatically identified per category and overall.</div>
+        <div id="pc-content-${proj.id}">${renderPriceCompare(proj)}</div>
+      </div>
+      <div class="proj-tab-content" id="tab-${proj.id}-notes">
+        <div style="margin-bottom:10px;font-size:12px;color:var(--muted);">Shared notes visible to both Venture Builder and Production & R&D teams.</div>
+        <textarea class="proj-notes" onblur="saveNote(${proj.id},this.value)">${proj.notes}</textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+          <button class="btn btn-primary" onclick="saveNoteBtn(${proj.id})">Save Notes</button>
+        </div>
+      </div>
+    </div>`;
+  return card;
+}
+
+function renderPricingCalc(proj) {
+  const matTot = calcMaterialTotal(proj);
+  const labTot = calcLaborTotal(proj);
+  const oh     = (matTot + labTot) * ((parseFloat(proj.overhead)||0)/100);
+  const cogs   = matTot + labTot + oh;
+  const margin = parseFloat(proj.targetMargin)||60;
+  const price  = calcSuggestedPrice(proj);
+  return `
+    <div style="margin-bottom:16px;font-size:13px;font-weight:600;color:var(--brown);">Cost Breakdown & Pricing</div>
+    <div class="calc-row"><label>Materials Total</label><span class="calc-result">${fmt(matTot)}</span></div>
+    <div class="calc-row"><label>Labor Total</label><span class="calc-result">${fmt(labTot)}</span></div>
+    <div class="calc-row">
+      <label>Overhead % &nbsp;<input class="calc-input" type="number" value="${proj.overhead}" min="0" max="100" oninput="updateOverhead(${proj.id},this.value)" style="width:70px;"></label>
+      <span class="calc-result">${fmt(oh)}</span>
+    </div>
+    <div class="calc-row" style="border-top:2px solid var(--cream-dk);margin-top:4px;padding-top:14px;">
+      <label style="font-weight:600;color:var(--body);">Total COGS</label>
+      <span class="calc-result" style="font-size:18px;">${fmt(cogs)}</span>
+    </div>
+    <div class="calc-row">
+      <label>Target Margin % &nbsp;<input class="calc-input" type="number" value="${margin}" min="1" max="99" oninput="updateMargin(${proj.id},this.value)" style="width:70px;"></label>
+      <span class="calc-result">&nbsp;</span>
+    </div>
+    <div class="calc-row" style="border-top:2px solid var(--brown);margin-top:4px;padding-top:14px;background:rgba(51,43,30,0.03);border-radius:0 0 6px 6px;padding-left:8px;padding-right:8px;">
+      <label style="font-weight:700;color:var(--brown);font-size:14px;">Suggested Retail Price</label>
+      <span class="calc-result green" style="font-size:22px;">${fmt(price)}</span>
+    </div>
+    <div style="margin-top:12px;padding:10px 12px;background:rgba(74,124,89,0.07);border-radius:6px;font-size:12px;color:var(--success);">
+      ✓ At ${fmt(price)} retail, the margin is ${margin}% — the Venture Builder team can price confidently from this baseline.
+    </div>`;
+}
+
+function supplierRow(pid,i,s){return`<tr><td><input type="text" value="${s.name}" placeholder="Supplier name" onchange="updateSupplier(${pid},${i},'name',this.value)"></td><td><input type="text" value="${s.contact}" placeholder="Contact name" onchange="updateSupplier(${pid},${i},'contact',this.value)"></td><td><input type="text" value="${s.phone}" placeholder="Phone or email" onchange="updateSupplier(${pid},${i},'phone',this.value)"></td><td><input type="text" value="${s.leadTime}" placeholder="e.g. 5–7 days" onchange="updateSupplier(${pid},${i},'leadTime',this.value)"></td><td><select onchange="updateSupplier(${pid},${i},'status',this.value)"><option ${s.status==='Active'?'selected':''}>Active</option><option ${s.status==='Preferred'?'selected':''}>Preferred</option><option ${s.status==='Backup'?'selected':''}>Backup</option><option ${s.status==='On Hold'?'selected':''}>On Hold</option></select></td><td class="action-cell"><button class="del-btn" onclick="deleteSupplier(${pid},${i})">×</button></td></tr>`;}
+
+function materialRow(pid,i,m){return`<tr><td><input type="text" value="${m.item}" placeholder="Material or item name" onchange="updateMaterial(${pid},${i},'item',this.value)"></td><td><input type="text" value="${m.supplier}" placeholder="Supplier" onchange="updateMaterial(${pid},${i},'supplier',this.value)"></td><td><input type="text" value="${m.qty}" placeholder="Qty" onchange="updateMaterial(${pid},${i},'qty',this.value)"></td><td class="cost-cell"><input type="number" value="${m.unitCost}" min="0" step="0.01" placeholder="0.00" onchange="updateMaterial(${pid},${i},'unitCost',this.value);recalcMaterial(${pid},${i})"></td><td class="cost-cell"><input type="number" value="${m.totalCost}" min="0" step="0.01" placeholder="0.00" onchange="updateMaterial(${pid},${i},'totalCost',this.value);refreshProjectTotals(${pid})"></td><td class="action-cell"><button class="del-btn" onclick="deleteMaterial(${pid},${i})">×</button></td></tr>`;}
+
+function laborRow(pid,i,l){return`<tr><td><input type="text" value="${l.task}" placeholder="Task or operation" onchange="updateLabor(${pid},${i},'task',this.value)"></td><td class="cost-cell"><input type="number" value="${l.hours}" min="0" step="0.25" placeholder="0" onchange="updateLabor(${pid},${i},'hours',this.value);recalcLabor(${pid},${i})"></td><td class="cost-cell"><input type="number" value="${l.rate}" min="0" step="1" placeholder="0" onchange="updateLabor(${pid},${i},'rate',this.value);recalcLabor(${pid},${i})"></td><td class="cost-cell"><input type="number" value="${l.total}" min="0" step="0.01" placeholder="0.00" id="labor-total-${pid}-${i}" readonly style="font-weight:700;color:var(--brown);background:transparent;"></td><td class="action-cell"><button class="del-btn" onclick="deleteLabor(${pid},${i})">×</button></td></tr>`;}
+
+function toggleProject(id){openProjectId=openProjectId===id?null:id;renderProjects();}
+
+function switchProjTab(pid,tabName,el){
+  const body=document.querySelector(`#proj-card-${pid} .project-body`);
+  body.querySelectorAll('.proj-tab').forEach(t=>t.classList.remove('active'));
+  body.querySelectorAll('.proj-tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(`tab-${pid}-${tabName}`).classList.add('active');
+}
+
+function updateSupplier(pid,i,field,val){const proj=projects.find(p=>p.id===pid);proj.suppliers[i][field]=val;refreshProjectTotals(pid);}
+function updateMaterial(pid,i,field,val){const proj=projects.find(p=>p.id===pid);proj.materials[i][field]=(field==='item'||field==='supplier'||field==='qty')?val:parseFloat(val)||0;refreshProjectTotals(pid);}
+function recalcMaterial(pid,i){const proj=projects.find(p=>p.id===pid);const m=proj.materials[i];m.totalCost=(parseFloat(m.unitCost)||0)*(parseFloat(m.qty)||1);refreshProjectTotals(pid);const row=document.querySelectorAll(`#material-table-${pid} tbody tr`)[i];if(row)row.querySelectorAll('input')[4].value=m.totalCost.toFixed(2);}
+function updateLabor(pid,i,field,val){const proj=projects.find(p=>p.id===pid);proj.labor[i][field]=field==='task'?val:parseFloat(val)||0;}
+function recalcLabor(pid,i){const proj=projects.find(p=>p.id===pid);const l=proj.labor[i];l.total=(parseFloat(l.hours)||0)*(parseFloat(l.rate)||0);const ti=document.getElementById(`labor-total-${pid}-${i}`);if(ti)ti.value=l.total.toFixed(2);refreshProjectTotals(pid);}
+
+function refreshProjectTotals(pid){
+  const proj=projects.find(p=>p.id===pid);
+  const mat=calcMaterialTotal(proj),lab=calcLaborTotal(proj),cogs=calcCOGS(proj),price=calcSuggestedPrice(proj);
+  const card=document.getElementById('proj-card-'+pid);if(!card)return;
+  const vals=card.querySelectorAll('.cost-summary-val');
+  if(vals[0])vals[0].textContent=mat>0?fmt(mat):'—';
+  if(vals[1])vals[1].textContent=lab>0?fmt(lab):'—';
+  if(vals[2])vals[2].textContent=cogs>0?fmt(cogs):'—';
+  if(vals[3])vals[3].textContent=price>0?fmt(price):'—';
+  const ht=card.querySelectorAll('.project-total');
+  if(ht[0])ht[0].textContent=cogs>0?fmt(cogs):'—';
+  if(ht[1])ht[1].textContent=price>0?fmt(price):'—';
+  const calcEl=document.getElementById('pricing-calc-'+pid);
+  if(calcEl)calcEl.innerHTML=renderPricingCalc(proj);
+}
+
+function updateOverhead(pid,val){const proj=projects.find(p=>p.id===pid);proj.overhead=parseFloat(val)||0;refreshProjectTotals(pid);}
+function updateMargin(pid,val){const proj=projects.find(p=>p.id===pid);proj.targetMargin=parseFloat(val)||60;refreshProjectTotals(pid);}
+
+function addSupplierRow(pid){const proj=projects.find(p=>p.id===pid);proj.suppliers.push({name:'',contact:'',phone:'',leadTime:'',status:'Active'});const tbody=document.querySelector(`#supplier-table-${pid} tbody`);const i=proj.suppliers.length-1;tbody.insertAdjacentHTML('beforeend',supplierRow(pid,i,proj.suppliers[i]));showToast('Supplier row added.');}
+function addMaterialRow(pid){const proj=projects.find(p=>p.id===pid);proj.materials.push({item:'',supplier:'',qty:'',unitCost:0,totalCost:0});const tbody=document.querySelector(`#material-table-${pid} tbody`);const i=proj.materials.length-1;tbody.insertAdjacentHTML('beforeend',materialRow(pid,i,proj.materials[i]));showToast('Material row added.');}
+function addLaborRow(pid){const proj=projects.find(p=>p.id===pid);proj.labor.push({task:'',hours:0,rate:0,total:0});const tbody=document.querySelector(`#labor-table-${pid} tbody`);const i=proj.labor.length-1;tbody.insertAdjacentHTML('beforeend',laborRow(pid,i,proj.labor[i]));showToast('Labor task added.');}
+
+function deleteSupplier(pid,i){const proj=projects.find(p=>p.id===pid);proj.suppliers.splice(i,1);document.querySelectorAll(`#supplier-table-${pid} tbody tr`)[i].remove();showToast('Supplier removed.');}
+function deleteMaterial(pid,i){const proj=projects.find(p=>p.id===pid);proj.materials.splice(i,1);document.querySelectorAll(`#material-table-${pid} tbody tr`)[i].remove();refreshProjectTotals(pid);showToast('Material removed.');}
+function deleteLabor(pid,i){const proj=projects.find(p=>p.id===pid);proj.labor.splice(i,1);document.querySelectorAll(`#labor-table-${pid} tbody tr`)[i].remove();refreshProjectTotals(pid);showToast('Task removed.');}
+
+function saveNote(pid,val){const proj=projects.find(p=>p.id===pid);proj.notes=val;}
+function saveNoteBtn(pid){const ta=document.querySelector(`#tab-${pid}-notes textarea`);if(ta)saveNote(pid,ta.value);showToast('✓ Notes saved.');}
+
+// ── PRICE COMPARE ENGINE ─────────────────────────────────────────────────────
+
+function renderPriceCompare(proj) {
+  if (!proj.priceCompare) proj.priceCompare = [];
+  const rows = proj.priceCompare;
+  const fmt2 = v => v > 0 ? '$' + parseFloat(v).toFixed(2) : '—';
+
+  // Determine per-category winners
+  function winnerIdx(field) {
+    let best = Infinity, idx = -1;
+    rows.forEach((r, i) => {
+      const v = parseFloat(r[field]) || 0;
+      if (v > 0 && v < best) { best = v; idx = i; }
+    });
+    return idx;
+  }
+  const wProd = winnerIdx('product');
+  const wPack = winnerIdx('packaging');
+  const wShip = winnerIdx('shipping');
+
+  // Overall winner: lowest total
+  let overallIdx = -1, overallMin = Infinity;
+  rows.forEach((r, i) => {
+    const tot = (parseFloat(r.product)||0) + (parseFloat(r.packaging)||0) + (parseFloat(r.shipping)||0);
+    if (tot > 0 && tot < overallMin) { overallMin = tot; overallIdx = i; }
+  });
+
+  // Max total for savings calc
+  let maxTotal = 0;
+  rows.forEach(r => {
+    const tot = (parseFloat(r.product)||0) + (parseFloat(r.packaging)||0) + (parseFloat(r.shipping)||0);
+    if (tot > maxTotal) maxTotal = tot;
+  });
+  const savings = overallIdx >= 0 && maxTotal > overallMin ? maxTotal - overallMin : 0;
+
+  function winBadge(i, field) {
+    const widx = field==='product'?wProd:field==='packaging'?wPack:wShip;
+    if (rows.length < 2) return `<span class="winner-badge none">—</span>`;
+    const v = parseFloat(rows[i][field])||0;
+    if (v === 0) return `<span class="winner-badge none">No data</span>`;
+    if (i === widx) return `<span class="winner-badge gold">🏆 Winner</span>`;
+    return `<span class="winner-badge none">—</span>`;
+  }
+
+  const tableRows = rows.map((r, i) => `
+    <tr>
+      <td><input type="text" value="${r.supplier||''}" placeholder="Supplier name" onchange="updatePC(${proj.id},${i},'supplier',this.value)"></td>
+      <td class="pc-num"><input type="number" value="${r.product||''}" min="0" step="0.01" placeholder="0.00" onchange="updatePC(${proj.id},${i},'product',this.value)"></td>
+      <td class="pc-winner-cell">${winBadge(i,'product')}</td>
+      <td class="pc-num"><input type="number" value="${r.packaging||''}" min="0" step="0.01" placeholder="0.00" onchange="updatePC(${proj.id},${i},'packaging',this.value)"></td>
+      <td class="pc-winner-cell">${winBadge(i,'packaging')}</td>
+      <td class="pc-num"><input type="number" value="${r.shipping||''}" min="0" step="0.01" placeholder="0.00" onchange="updatePC(${proj.id},${i},'shipping',this.value)"></td>
+      <td class="pc-winner-cell">${winBadge(i,'shipping')}</td>
+      <td class="pc-num" style="font-weight:700;color:var(--brown);text-align:right;padding:10px 12px;">${fmt2((parseFloat(r.product)||0)+(parseFloat(r.packaging)||0)+(parseFloat(r.shipping)||0))}</td>
+      <td><input type="text" value="${r.notes||''}" placeholder="Notes…" onchange="updatePC(${proj.id},${i},'notes',this.value)"></td>
+      <td class="pc-action"><button class="del-btn" onclick="deletePC(${proj.id},${i})">×</button></td>
+    </tr>`).join('');
+
+  // Summary boxes
+  const cats = ['product','packaging','shipping'];
+  const catLabels = ['Product / Manufacturing','Packaging','Shipping / Freight'];
+  const catIcons  = ['⚙','📦','🚚'];
+  const summaryBoxes = cats.map((c,ci) => {
+    const wi = c==='product'?wProd:c==='packaging'?wPack:wShip;
+    const name = wi>=0 ? rows[wi].supplier||'—' : '—';
+    const val  = wi>=0 ? fmt2(parseFloat(rows[wi][c])||0) : '—';
+    return `<div class="pc-summary-item">
+      <div class="pc-summary-cat">${catIcons[ci]} ${catLabels[ci]}</div>
+      <div class="pc-summary-name">${name}</div>
+      <div class="pc-summary-val ${wi<0?'empty':''}">${val}</div>
+    </div>`;
+  }).join('');
+
+  const overallName = overallIdx>=0 ? rows[overallIdx].supplier||'—' : 'No data yet';
+  const overallCost = overallIdx>=0 ? '$'+overallMin.toFixed(2) : '—';
+  const savingsText = savings>0 ? `Saves $${savings.toFixed(2)} vs. most expensive option` : overallIdx>=0 ? 'Only one supplier with full data' : 'Add at least 2 suppliers to compare';
+
+  return `
+    <div class="pc-category">
+      <div class="pc-category-title">
+        <span class="pc-category-icon">⚖</span>
+        Side-by-Side Comparison
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="price-compare-table">
+          <thead>
+            <tr>
+              <th>Supplier</th>
+              <th>Product Cost</th><th>Winner</th>
+              <th>Packaging</th><th>Winner</th>
+              <th>Shipping</th><th>Winner</th>
+              <th>Total</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+      <button class="add-row-btn" onclick="addPC(${proj.id})">＋ Add Supplier for Comparison</button>
+    </div>
+    <div class="pc-summary">
+      <div class="pc-summary-title">🏆 Category Winners</div>
+      <div class="pc-summary-grid">${summaryBoxes}
+        <div class="pc-summary-item" style="border-color:rgba(74,124,89,0.3);background:rgba(74,124,89,0.04);">
+          <div class="pc-summary-cat">💰 Lowest Total</div>
+          <div class="pc-summary-name">${overallName}</div>
+          <div class="pc-summary-val ${overallIdx<0?'empty':''}">${overallCost}</div>
+        </div>
+      </div>
+      <div class="pc-overall-winner">
+        <div>
+          <div class="pc-overall-label">Overall Recommended Supplier</div>
+          <div class="pc-overall-name">${overallName}</div>
+          <div class="pc-overall-savings ${savings===0?'none':''}">${savingsText}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="pc-overall-label">Best Total Cost</div>
+          <div class="pc-overall-cost">${overallCost}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function updatePC(pid, i, field, val) {
+  const proj = projects.find(p => p.id === pid);
+  if (!proj.priceCompare[i]) return;
+  proj.priceCompare[i][field] = (field === 'supplier' || field === 'notes') ? val : parseFloat(val)||0;
+  refreshPC(pid);
+}
+
+function addPC(pid) {
+  const proj = projects.find(p => p.id === pid);
+  if (!proj.priceCompare) proj.priceCompare = [];
+  proj.priceCompare.push({ supplier: '', product: 0, packaging: 0, shipping: 0, notes: '' });
+  refreshPC(pid);
+  showToast('Supplier row added to comparison.');
+}
+
+function deletePC(pid, i) {
+  const proj = projects.find(p => p.id === pid);
+  proj.priceCompare.splice(i, 1);
+  refreshPC(pid);
+  showToast('Supplier removed from comparison.');
+}
+
+function refreshPC(pid) {
+  const proj = projects.find(p => p.id === pid);
+  const el = document.getElementById('pc-content-' + pid);
+  if (el) el.innerHTML = renderPriceCompare(proj);
+}
+
+function openNewProjectModal(){document.getElementById('new-project-modal').classList.add('open');}
+function closeNewProjectModal(){document.getElementById('new-project-modal').classList.remove('open');}
+function closeNewProjectModalOutside(e){if(e.target.id==='new-project-modal')closeNewProjectModal();}
+
+function createProject(){
+  const name=document.getElementById('np-name').value.trim();
+  const brand=document.getElementById('np-brand').value;
+  const shop=document.getElementById('np-shop').value;
+  const stage=document.getElementById('np-stage').value;
+  if(!name||!brand||!shop){showToast('Please fill in Name, Brand, and Shop.');return;}
+  const newProj={id:Date.now(),name,brand,shop,stage,color:dotColors[projects.length%dotColors.length],notes:'',suppliers:[],materials:[],labor:[],overhead:10,targetMargin:60,priceCompare:[]};
+  projects.push(newProj);
+  openProjectId=newProj.id;
+  closeNewProjectModal();
+  document.getElementById('np-name').value='';
+  document.getElementById('np-brand').value='';
+  document.getElementById('np-shop').value='';
+  renderProjects();
+  showToast('✓ Project created. Add suppliers, materials, and labor below.');
+}
+</script>
+</body>
+</html>
